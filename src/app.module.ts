@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { AppService } from './app.service';
-import { AuthentModule } from './authent/authent.module';
 import { UsersModule } from './users/users.module';
  import { LivresModule } from './livres/livres.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -15,11 +14,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     autoLoadEntities: true,
     synchronize: true,
   }),
-  AuthentModule, 
   LivresModule,
-    UsersModule,
+  UsersModule,
 ],
-   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
