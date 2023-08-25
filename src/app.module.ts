@@ -4,6 +4,7 @@ import { UsersModule } from './users/users.module';
  import { LivresModule } from './livres/livres.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
   TypeOrmModule.forRoot({
