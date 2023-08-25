@@ -5,7 +5,7 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { GenreModule } from './genre/genre.module';
-import { AuthModule } from './auth/auth.module';
+
 @Module({
   imports: [
   TypeOrmModule.forRoot({
