@@ -1,34 +1,58 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, SetMetadata, UseInterceptors, ClassSerializerInterceptor, Request, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
 import { UpdateAuthDto } from './dto/update-auth.dto';
+import { ApiBearerAuth, ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { LocalAuthGuard } from './local-auth-guard';
+import { IS_PUBLIC_KEY } from './public.decorator';
 
 @Controller('auth')
+@ApiBearerAuth()
+@ApiTags('Authentification')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
+  
+  @ApiOperation({ description: 'this is the endpoint for login' })
+  @ApiCreatedResponse({
+    description: 'The record has been successfully created.',
+    type: CreateAuthDto,
+  })
+  @UseGuards(LocalAuthGuard)
+  @Post('login')
+  @SetMetadata(IS_PUBLIC_KEY,true)
+  @UseInterceptors(ClassSerializerInterceptor)
+  async create(@Body() createAuthDto: CreateAuthDto, @Request() req) {
+    return await this.authService.login(req.user);
+  }
+@ApiOperation({ description: 'this is the endpoint for having user authenticated' })
+  @ApiCreatedResponse({
+    description: 'The record has been successfully created.',
+    type: CreateAuthDto,
+  })
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get('user')
+  async user(@Request() req) {
+    return this.authService.user(req.user);
   }
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
+  
+  @Get('test')
+  @SetMetadata(IS_PUBLIC_KEY,true)
+  async test(@Req() req) {
+    return req.user;
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
+  @Post('refresh')
+  async refresh(
+    @Req() req,
+    @Res({ passthrough: true }) res,
+  ) {
+    return this.authService.refresh(req, res);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  @Post('logout')
+  logout(@Req() req, @Res({ passthrough: true }) res) {
+    this.authService.logout(req, res);
+    return { message: 'log out successfully' };
   }
 }
