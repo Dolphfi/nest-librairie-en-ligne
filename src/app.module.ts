@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
  import { LivresModule } from './livres/livres.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -22,6 +21,6 @@ import { GenreModule } from './genre/genre.module';
   AuthModule,
   GenreModule,
 ],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule {}
