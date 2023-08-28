@@ -1,9 +1,5 @@
 import { Module } from '@nestjs/common';
-import { UsersModule } from './users/users.module';
- import { LivresModule } from './livres/livres.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './auth/auth.module';
-import { GenreModule } from './genre/genre.module';
 
 @Module({
   imports: [
@@ -16,10 +12,6 @@ import { GenreModule } from './genre/genre.module';
     autoLoadEntities: true,
     synchronize: true,
   }),
-  LivresModule,
-  UsersModule,
-  AuthModule,
-  GenreModule,
 ],
   providers: [],
 })
