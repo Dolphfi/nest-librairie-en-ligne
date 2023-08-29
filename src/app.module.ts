@@ -1,8 +1,6 @@
 import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
-import { CurrentUserMiddleware } from './utility/middlewares/current-user.middleware';
-import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -17,6 +15,7 @@ import { ConfigModule } from '@nestjs/config';
     synchronize: true,
   }),
   UsersModule,
+  LivresModule,
 ],
   providers: [],
 })
