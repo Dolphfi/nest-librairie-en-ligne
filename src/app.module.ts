@@ -4,6 +4,7 @@ import { UsersModule } from './users/users.module';
 import { CurrentUserMiddleware } from './utility/middlewares/current-user.middleware';
 import { ConfigModule } from '@nestjs/config';
 import { LivresModule } from './livres/livres.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { LivresModule } from './livres/livres.module';
   }),
   UsersModule,
   LivresModule,
+  CategoryModule,
 ],
   providers: [],
 })
