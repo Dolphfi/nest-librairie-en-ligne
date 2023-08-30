@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiTags } from '@nestjs/swagger';
@@ -6,6 +6,10 @@ import { SignUpUserDto } from './dto/user-signup.dto';
 import { User } from './entities/user.entity';
 import { SignInUserDto } from './dto/user-signin.dto';
 import { CurrentUser } from 'src/utility/decorators/current-users.decorator';
+import { AuthentificationGuard } from 'src/utility/guards/authentification.guard';
+import { AuthorizeRoles } from 'src/utility/decorators/authorize-roles.decorator';
+import { UserRole } from 'src/utility/common/user-roles.enum';
+import { AuthorizeGuard } from 'src/utility/guards/authorization.guard';
 
 @Controller('users')
 @ApiTags('Users')
@@ -26,7 +30,9 @@ export class UsersController {
 
     return {token_access, user};
   }
-
+  
+  @AuthorizeRoles(UserRole.Admin)
+  @UseGuards(AuthentificationGuard,AuthorizeGuard)
   @Get('all') 
   async findAll(): Promise<User[]> {
     return this.usersService.findAll();
@@ -46,11 +52,12 @@ export class UsersController {
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
   }
-   
+  
+  @UseGuards(AuthentificationGuard)
   @Get('me')
   getProfile(@CurrentUser() currentUser:User){
     return currentUser;
-
   }
+
 
 }
