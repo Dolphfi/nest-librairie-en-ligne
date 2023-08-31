@@ -7,13 +7,18 @@ import { User } from 'src/users/entities/user.entity';
 import { AuthentificationGuard } from 'src/utility/guards/authentification.guard';
 import { UserRole } from 'src/utility/common/user-roles.enum';
 import { AuthGuard } from '@nestjs/passport';
-import { promises } from 'dns';
 import { Category } from './entities/category.entity';
+import { ApiTags } from '@nestjs/swagger';
+import { AuthorizeGuard } from 'src/utility/guards/authorization.guard';
+import { AuthorizeRoles } from 'src/utility/decorators/authorize-roles.decorator';
 
 @Controller('category')
+@ApiTags('Genre')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
-@UseGuards(AuthentificationGuard,AuthGuard([UserRole.Admin]))
+
+  @AuthorizeRoles(UserRole.Admin)
+  @UseGuards(AuthentificationGuard,AuthorizeGuard)
   @Post()
   async create(@Body() createCategoryDto: CreateCategoryDto,@CurrentUser()currentUser:User)
   :Promise<Category>{
@@ -30,15 +35,10 @@ export class CategoryController {
     return await this.categoryService.findOne(+id);
   }
 
-  @UseGuards(AuthentificationGuard,AuthGuard([UserRole.Admin]))
+  @AuthorizeRoles(UserRole.Admin)
+  @UseGuards(AuthentificationGuard,AuthorizeGuard)
   @Patch(':id')
- async update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto)
- :Promise<Category> {
+ async update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto): Promise<Category> {
     return await this.categoryService.update(+id, updateCategoryDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoryService.remove(+id);
   }
 }

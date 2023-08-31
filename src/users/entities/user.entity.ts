@@ -26,5 +26,5 @@ export class User {
     roles: UserRole[];
 
     @OneToMany(()=>Category,(cat)=>cat.addedBy)
-    categories:Category[];
+    category:Category[];
 }
