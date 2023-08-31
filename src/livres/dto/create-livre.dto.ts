@@ -33,5 +33,5 @@ export class CreateLivreDto {
         description:'Genre de livre',})
     @IsNotEmpty({message:' category ne devrait pas etre vide'})
     @IsNumber({},{message:'category id devrait etre un nombre' })
-    category: number;
+    categoryId: number;
 }

@@ -16,9 +16,13 @@ import { ApiTags } from '@nestjs/swagger';
 export class LivresController {
   constructor(private readonly livresService: LivresService) {}
 
+  @AuthorizeRoles(UserRole.Admin)
+  @UseGuards(AuthentificationGuard,AuthorizeGuard)
   @Post()
-  create(@Body() createLivreDto: CreateLivreDto) {
-    return this.livresService.create(createLivreDto);
+  async create(@Body() createLivreDto: CreateLivreDto, 
+  @CurrentUser() currentUser:User,
+  ): Promise<Livre> {
+    return await this.livresService.create(createLivreDto, currentUser);
   }
 
   @Get()
