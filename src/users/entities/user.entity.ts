@@ -1,4 +1,5 @@
 import { Category } from "src/category/entities/category.entity";
+import { Livre } from "src/livres/entities/livre.entity";
 import { UserRole } from "src/utility/common/user-roles.enum";
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
@@ -27,4 +28,7 @@ export class User {
 
     @OneToMany(()=>Category,(cat)=>cat.addedBy)
     category:Category[];
+
+    @OneToMany(()=>Livre,(livres)=>livres.addedBy)
+    livre:Livre[];
 }

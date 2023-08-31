@@ -13,8 +13,7 @@ import { AuthorizeGuard } from 'src/utility/guards/authorization.guard';
 
 @Controller('users')
 @ApiTags('Users')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+export class UsersController { constructor(private readonly usersService: UsersService) {}
 
   @Post('signup')
   async create(@Body() signUpUserDto: SignUpUserDto): Promise<{user: User}> {
