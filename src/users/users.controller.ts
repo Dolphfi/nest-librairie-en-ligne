@@ -13,8 +13,7 @@ import { AuthorizeGuard } from 'src/utility/guards/authorization.guard';
 
 @Controller('users')
 @ApiTags('Users')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+export class UsersController { constructor(private readonly usersService: UsersService) {}
 
   @Post('signup')
   async create(@Body() signUpUserDto: SignUpUserDto): Promise<{user: User}> {
@@ -42,22 +41,10 @@ export class UsersController {
   async findOne(@Param('id') id: string): Promise<User> {
     return await this.usersService.findOne(+id);
   }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
-  }
   
   @UseGuards(AuthentificationGuard)
   @Get('me')
   getProfile(@CurrentUser() currentUser:User){
     return currentUser;
   }
-
-
 }

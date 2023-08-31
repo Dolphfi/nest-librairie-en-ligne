@@ -1,5 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException, mixin } from "@nestjs/common";
-import { AuthorizeRoles } from "../decorators/authorize-roles.decorator";
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException  } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { UserRole } from "../common/user-roles.enum";
 
@@ -16,10 +15,6 @@ export class AuthorizeGuard implements CanActivate{
             const permissions = allowedRoles.includes(userRole);
             if(permissions) return true;
         } throw new UnauthorizedException("Not authorized to access");
-      
     }
-    
-
-
 }
 

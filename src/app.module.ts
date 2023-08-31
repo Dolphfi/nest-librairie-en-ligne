@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { CurrentUserMiddleware } from './utility/middlewares/current-user.middleware';
 import { ConfigModule } from '@nestjs/config';
-import { LivresModule } from './livres/livres.module';
 import { CategoryModule } from './category/category.module';
+import { LivresModule } from './livres/livres.module';
 
 @Module({
   imports: [
@@ -19,8 +19,8 @@ import { CategoryModule } from './category/category.module';
     synchronize: true,
   }),
   UsersModule,
-  LivresModule,
   CategoryModule,
+  LivresModule,
 ],
   providers: [],
 })
