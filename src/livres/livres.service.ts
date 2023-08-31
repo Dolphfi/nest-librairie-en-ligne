@@ -5,14 +5,23 @@ import { Livre } from './entities/livre.entity';
 import { User } from 'src/users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CategoryService } from 'src/category/category.service';
 
 @Injectable()
 export class LivresService {
   constructor(@InjectRepository(Livre)
-  private readonly livreRepository:Repository<Livre>){}
+  private readonly livreRepository:Repository<Livre>,
+  private readonly categoryService: CategoryService){}
   
-  create(createLivreDto: CreateLivreDto) {
-    return 'This action adds a new livre';
+  async create(createLivreDto: CreateLivreDto,currentUser:User,
+    ): Promise<Livre> {
+  const category = await this.categoryService.findOne(
+  +createLivreDto.categoryId);
+  const livre = this.livreRepository.create(createLivreDto);
+  livre.category  = category;
+  livre.addedBy = currentUser;
+
+  return await this.livreRepository.save(livre)
   }
 
   async findAll():Promise<Livre[]> {
@@ -48,7 +57,7 @@ export class LivresService {
     const livre=await this.findOne(id);
     Object.assign(livre,updateLivreDto)
     livre.addedBy=currentUser;
-    if(updateLivreDto.category)
+    if(updateLivreDto.categoryId)
 
     return `This action updates a #${id} livre`;
   }
