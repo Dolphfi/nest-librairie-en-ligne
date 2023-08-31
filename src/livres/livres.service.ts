@@ -3,9 +3,14 @@ import { CreateLivreDto } from './dto/create-livre.dto';
 import { UpdateLivreDto } from './dto/update-livre.dto';
 import { Livre } from './entities/livre.entity';
 import { User } from 'src/users/entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class LivresService {
+  constructor(@InjectRepository(Livre)
+  private readonly livreRepository:Repository<Livre>){}
+  
   create(createLivreDto: CreateLivreDto) {
     return 'This action adds a new livre';
   }
