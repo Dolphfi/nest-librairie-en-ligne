@@ -7,13 +7,10 @@ import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, PrimaryGenerat
 export class Livre {
     @PrimaryGeneratedColumn()
     id:number;
-
     @Column()
     titre:string;
-
     @Column()
     auteur:string;
-
     @Column({type:'decimal',precision:10,scale:2,default:0})
     prix:number;
 
