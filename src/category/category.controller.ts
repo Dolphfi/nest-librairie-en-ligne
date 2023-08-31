@@ -6,7 +6,6 @@ import { CurrentUser } from 'src/utility/decorators/current-users.decorator';
 import { User } from 'src/users/entities/user.entity';
 import { AuthentificationGuard } from 'src/utility/guards/authentification.guard';
 import { UserRole } from 'src/utility/common/user-roles.enum';
-import { AuthGuard } from '@nestjs/passport';
 import { Category } from './entities/category.entity';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthorizeGuard } from 'src/utility/guards/authorization.guard';
