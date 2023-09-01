@@ -7,7 +7,6 @@ import { SignUpUserDto } from './dto/user-signup.dto';
 import * as bcrypt from 'bcrypt';
 import { SignInUserDto } from './dto/user-signin.dto';
 import { sign } from 'jsonwebtoken';
-import { from } from 'rxjs';
 
 @Injectable()
 export class UsersService {
@@ -63,4 +62,11 @@ export class UsersService {
     return sign({id:userEn.id,email:userEn.email},process.env.TOKEN_ACCESS_SECRET_KEY,
     {expiresIn:'7d'})
   }
+
+  async update(updateUserDto: UpdateUserDto, currentUser:User,): Promise<User> {
+    const user = await this.findOne(currentUser.id);
+    Object.assign(user,updateUserDto)
+    return await this.usersRepository.save(user);
+  }
+
 }

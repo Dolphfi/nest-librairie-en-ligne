@@ -18,6 +18,8 @@ export class LivresService {
   const category = await this.categoryService.findOne(
   +createLivreDto.categoryId);
   const livre = this.livreRepository.create(createLivreDto);
+  const livreExist = await this.livreRepository.findOne({where: {titre: livre.titre}});
+  if(livreExist) throw new NotFoundException('Livre already exist');
   livre.category  = category;
   livre.addedBy = currentUser;
 
@@ -29,7 +31,6 @@ export class LivresService {
   }
 
   async findOne(id: number) {
-
     const livre= await this.livreRepository.findOne({
       where:{ id : id },
       relations:{
@@ -42,6 +43,7 @@ export class LivresService {
           nom:true,
           prenom:true,
           email:true,
+          roles:true,
         },
         category:{
           id:true,
@@ -53,16 +55,22 @@ export class LivresService {
     return livre;
   }
 
-  async update(id: number, updateLivreDto:Partial<UpdateLivreDto>,currentUser:User) {
+  async update(id: number, updateLivreDto:Partial<UpdateLivreDto>,currentUser:User,):Promise<Livre> {
     const livre=await this.findOne(id);
     Object.assign(livre,updateLivreDto)
     livre.addedBy=currentUser;
-    if(updateLivreDto.categoryId)
+    if(updateLivreDto.categoryId){
+      const category = await this.categoryService.findOne(
+      +updateLivreDto.categoryId);
+      livre.category  = category;
+    }
 
-    return `This action updates a #${id} livre`;
+    return await this.livreRepository.save(livre);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} livre`;
+  async remove(id: number) {
+    const livreExist = await this.livreRepository.findOne({where: {id}});
+    if (!livreExist) throw new NotFoundException(`Livre with ${id} not found.`);
+    return await this.livreRepository.delete(id);
   }
 }

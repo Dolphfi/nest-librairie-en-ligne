@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, NotFoundException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { SignUpUserDto } from './dto/user-signup.dto';
 import { User } from './entities/user.entity';
 import { SignInUserDto } from './dto/user-signin.dto';
@@ -32,19 +32,33 @@ export class UsersController { constructor(private readonly usersService: UsersS
   
   @AuthorizeRoles(UserRole.Admin)
   @UseGuards(AuthentificationGuard,AuthorizeGuard)
-  @Get('all') 
+  @Get() 
+  @ApiResponse({type: SignUpUserDto, isArray: true})
   async findAll(): Promise<User[]> {
     return this.usersService.findAll();
   }
 
-  @Get('single/:id')
+  @AuthorizeRoles(UserRole.Admin)
+  @UseGuards(AuthentificationGuard,AuthorizeGuard)
+  @Get(':id')
+  @ApiResponse({type: SignUpUserDto, isArray:false})
+  @ApiParam({name: 'id', type: 'number', description: 'id of user'})
   async findOne(@Param('id') id: string): Promise<User> {
     return await this.usersService.findOne(+id);
   }
   
   @UseGuards(AuthentificationGuard)
   @Get('me')
-  getProfile(@CurrentUser() currentUser:User){
-    return currentUser;
+  @ApiResponse({type: SignUpUserDto, isArray:false}
+  )
+  async viewProfile(@CurrentUser() currentUser:User): Promise<User> {
+    return await this.usersService.findOne(currentUser.id);
+    }
+
+@UseGuards(AuthentificationGuard)
+@Patch('me')
+async update( @Body() updateUserDto: UpdateUserDto, @CurrentUser() currentUser:User,):Promise<User> {
+    const user = currentUser;
+    return await this.usersService.update(updateUserDto, currentUser);
   }
 }
