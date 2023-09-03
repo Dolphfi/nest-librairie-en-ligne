@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -39,7 +39,7 @@ export class CategoryController {
   @ApiOperation({
     description: 'this is the endpoint for retrieving  one category',
   })
-  async findOne(@Param('id') id: string) :Promise<Category>{
+  async findOne(@Param('id',ParseIntPipe) id: string) :Promise<Category>{
     return await this.categoryService.findOne(+id);
   }
 
@@ -51,7 +51,7 @@ export class CategoryController {
     description: 'this is the endpoint for updating  a genre(Category Livre)',
   })
   @ApiParam({name:'id',type:'number',description:'id category'})
- async update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto): Promise<Category> {
+ async update(@Param('id',ParseIntPipe) id: string, @Body() updateCategoryDto: UpdateCategoryDto): Promise<Category> {
     return await this.categoryService.update(+id, updateCategoryDto);
   }
 }

@@ -41,7 +41,7 @@ export class LivresController {
   })
   @ApiParam({name:'id',type:'number',description:'id du livre'})
   @ApiResponse({type:Livre, isArray:false})
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id',ParseIntPipe) id: string) {
     return await this.livresService.findOne(+id);
   }
 
