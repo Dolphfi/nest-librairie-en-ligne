@@ -1,5 +1,6 @@
 import { Category } from "src/category/entities/category.entity";
 import { Livre } from "src/livres/entities/livre.entity";
+import { Review } from "src/reviews/entities/review.entity";
 import { UserRole } from "src/utility/common/user-roles.enum";
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
@@ -31,4 +32,7 @@ export class User {
 
     @OneToMany(()=>Livre,(livres)=>livres.addedBy)
     livre:Livre[];
+
+    @OneToMany(()=>Review,(rev)=>rev.User)
+    Review:Review[];
 }

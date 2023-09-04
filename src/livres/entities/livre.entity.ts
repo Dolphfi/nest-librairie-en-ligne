@@ -1,6 +1,7 @@
 import { Category } from "src/category/entities/category.entity";
+import { Review } from "src/reviews/entities/review.entity";
 import { User } from "src/users/entities/user.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Timestamp, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Timestamp, UpdateDateColumn } from "typeorm";
 @Entity('livres')
 export class Livre {
     @PrimaryGeneratedColumn()
@@ -23,4 +24,6 @@ export class Livre {
     addedBy:User;
     @ManyToOne(()=>Category,(cat)=>cat.livre)
     category: Category;
+    @OneToMany(()=>Review,(rev)=>rev.livre)
+    Review:Review;
 }
