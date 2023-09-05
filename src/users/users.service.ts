@@ -60,7 +60,7 @@ export class UsersService {
 
   async token_access(userEn:User): Promise<string>{
     return sign({id:userEn.id,email:userEn.email},process.env.TOKEN_ACCESS_SECRET_KEY,
-    {expiresIn:'7d'})
+    {expiresIn:'30d'})
   }
 
   async update(updateUserDto: UpdateUserDto, currentUser:User,): Promise<User> {
