@@ -14,10 +14,19 @@ export class ReviewsService {
   private readonly livreService:LivresService
   ){}
 
-  async create(createReviewDto: CreateReviewDto,currentUser:User) {
-    const livvre=await this.livreService.findOne(createReviewDto.livreId);
-
-    return createReviewDto;
+  async create(createReviewDto: CreateReviewDto,currentUser:User)
+  :Promise<Review> {
+    const livre=await this.livreService.findOne(createReviewDto.livreId);
+    let review=await this.findOneByUserAndLivres(currentUser.id,createReviewDto.livreId);
+    if(!review){
+      review=this.reviewRepository.create(createReviewDto);
+      review.User=currentUser;
+      review.livre=livre;
+    }else{
+      review.comment=createReviewDto.comment,
+      review.rating=createReviewDto.rating
+    }
+    return await this.reviewRepository.save(review);
   }
 
   findAll() {
@@ -39,12 +48,20 @@ export class ReviewsService {
   async findOneByUserAndLivres(userId:number,livreId:number){
     return await this.reviewRepository.findOne({
       where:{
-      user:{
-        id:userId
+        User:{
+          id:userId
+        },
+        livre:{
+          id:livreId
+        }
       },
-    }
-  })
-    
+      relations:{
+        User:true,
+        livre:{
+          category:true
+        }
 
+      }
+    })
   }
 }

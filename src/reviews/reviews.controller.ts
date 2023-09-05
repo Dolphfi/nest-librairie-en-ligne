@@ -13,7 +13,7 @@ export class ReviewsController {
 
   @UseGuards(AuthentificationGuard)
   @Post()
-  async create(@Body() createReviewDto: CreateReviewDto,@CurrentUser() CurrentUser:User) {
+  async create(@Body() createReviewDto: CreateReviewDto,@CurrentUser() currentUser:User) {
     return await this.reviewsService.create(createReviewDto,currentUser);
   }
 
