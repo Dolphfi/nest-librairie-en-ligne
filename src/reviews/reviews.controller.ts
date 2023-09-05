@@ -1,15 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
+import { AuthentificationGuard } from 'src/utility/guards/authentification.guard';
+import { CurrentUser } from 'src/utility/decorators/current-users.decorator';
+import { cursorTo } from 'readline';
+import { User } from 'src/users/entities/user.entity';
 
 @Controller('reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
+  @UseGuards(AuthentificationGuard)
   @Post()
-  create(@Body() createReviewDto: CreateReviewDto) {
-    return this.reviewsService.create(createReviewDto);
+  async create(@Body() createReviewDto: CreateReviewDto,@CurrentUser() CurrentUser:User) {
+    return await this.reviewsService.create(createReviewDto,currentUser);
   }
 
   @Get()

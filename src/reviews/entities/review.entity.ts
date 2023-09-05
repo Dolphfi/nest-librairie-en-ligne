@@ -4,7 +4,7 @@ import { Livre } from "src/livres/entities/livre.entity";
 import { User } from "src/users/entities/user.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Timestamp, UpdateDateColumn } from "typeorm";
 
-@Entity({name:'Review'})
+@Entity('Review')
 
 export class Review {
     @PrimaryGeneratedColumn()
