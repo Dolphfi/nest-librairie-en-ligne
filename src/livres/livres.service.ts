@@ -6,6 +6,7 @@ import { User } from 'src/users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CategoryService } from 'src/category/category.service';
+import { OrderStatus } from 'src/orders/enums/order-status.enum';
 
 @Injectable()
 export class LivresService {
@@ -72,5 +73,16 @@ export class LivresService {
     const livreExist = await this.livreRepository.findOne({where: {id}});
     if (!livreExist) throw new NotFoundException(`Livre with ${id} not found.`);
     return await this.livreRepository.delete(id);
+  }
+
+  async updateStock(id:number, stock:number, status:string){
+    let livre = await this.findOne(id);
+    if (status===OrderStatus.DELIVERED) {
+      livre.stock-=stock;
+    }else{
+      livre.stock+=stock;
+    }
+    livre = await this.livreRepository.save(livre);
+    return livre;
   }
 }

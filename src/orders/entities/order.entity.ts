@@ -1,34 +1,30 @@
-import { join } from "path";
-import {Column,CreateDateColumn,Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn,Timestamp} from "typeorm";
-import { shippingEntity } from "./shipping.entity";
+import {Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn,Timestamp} from "typeorm";
+import { Shipping } from "./shipping.entity";
+import { OrderStatus } from "../enums/order-status.enum";
+import { User } from "src/users/entities/user.entity";
+import { OrdersLivres } from "./orders-livre.entity";
 
-@Entity({name:"orders"})
-export class OrderEntity {
+@Entity('orders')
+export class Order {
     @PrimaryGeneratedColumn()
     id:number;
-
     @CreateDateColumn()
     orderAt:Timestamp;
-
-    @Column({type:"enum",enum:OrderStatus,default:OrderStatus.PROCESSING})
+    @Column({type:"enum",enum:OrderStatus, default:OrderStatus.PENDING})
     status:string;
-
     @Column({nullable:true})
     ShippedAt:Date;
-
     @Column({nullable:true})
     deliveredAt:Date;
-
-    @ManyToOne(()=> UserEntity,(user)=>user.ordersUpdatedBy)
-    updatedBy:UserEntity;
-
-    @OneToOne (()=> ShippingEntity,(ship)=>ship.order,{cascade:true})
+    @ManyToOne(()=> User,(user)=>user.ordersUpdateBy)
+    updatedBy:User;
+    @OneToOne (()=> Shipping,(ship)=>ship.order,{cascade:true})
     @JoinColumn()
-    shippingAdress:shippingEntity;
-
-    @OneToOne (()=> OrdersProductsEntity,(op)=>op.order,{cascade:true})
-    products:OrdersProductsEntity[];
-  
+    shippingAddress:Shipping;
+    @OneToMany (()=> OrdersLivres,(ol)=>ol.order,{cascade:true})
+    livres:OrdersLivres[]; 
+    @ManyToOne(()=> User,(user)=>user.orders)
+    user:User;
   
 
 

@@ -1,6 +1,6 @@
 import { Category } from "src/category/entities/category.entity";
 import { Livre } from "src/livres/entities/livre.entity";
-import { OrderEntity } from "src/orders/entities/order.entity";
+import { Order } from "src/orders/entities/order.entity";
 import { Review } from "src/reviews/entities/review.entity";
 import { UserRole } from "src/utility/common/user-roles.enum";
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
@@ -27,16 +27,14 @@ export class User {
     updatedAt: Date;
     @Column({type: 'enum', enum: UserRole, default:[UserRole.Client]})
     roles: UserRole[];
-
     @OneToMany(()=>Category,(cat)=>cat.addedBy)
     category:Category[];
-
     @OneToMany(()=>Livre,(livres)=>livres.addedBy)
     livre:Livre[];
-
     @OneToMany(()=>Review,(rev)=>rev.User)
     Review:Review[];
-
-    @OneToMany(()=>OrderEntity,(order)=>order.updatedBy)
-    ordersUpdateBy:OrderEntity[]
+    @OneToMany(()=>Order,(order)=>order.updatedBy)
+    ordersUpdateBy:Order[]
+    @OneToMany(()=>Order,(order)=>order.user)
+    orders:Order[];
 }
