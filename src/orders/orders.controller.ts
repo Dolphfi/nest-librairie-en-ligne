@@ -1,8 +1,7 @@
 import { Controller, Get, Post, Body, Put, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthentificationGuard } from 'src/utility/guards/authentification.guard';
 import { CurrentUser } from 'src/utility/decorators/current-users.decorator';
 import { User } from 'src/users/entities/user.entity';
@@ -19,16 +18,28 @@ export class OrdersController {
 
   @UseGuards(AuthentificationGuard)
   @Post()
+  @ApiOperation({
+    description: 'this is the endpoint for Creating  an order',
+    })
   async create(@Body() createOrderDto: CreateOrderDto,@CurrentUser() currentUser:User):Promise<Order> {
     return await this.ordersService.create(createOrderDto,currentUser);
   }
 
   @Get()
+  @ApiOperation({
+    description: 'this is the endpoint for retrieving all  orders',
+    })
+  @ApiResponse({type:Order, isArray:true})
   async findAll():Promise<Order[]>  {
     return await this.ordersService.findAll();
   }
 
   @Get(':id')
+  @ApiOperation({
+    description: 'this is the endpoint for retrieving  one order',
+    })
+  @ApiParam({name:'id',type:'number',description:'id de la commande'})
+  @ApiResponse({type:Order, isArray:false})
   async findOne(@Param('id',ParseIntPipe) id: string):Promise<Order> {
     return await this.ordersService.findOne(+id);
   }
@@ -36,6 +47,10 @@ export class OrdersController {
   @AuthorizeRoles(UserRole.Admin)
   @UseGuards(AuthentificationGuard,AuthorizeGuard)
   @Put(':id')
+  @ApiOperation({
+    description: 'this is the endpoint for updating  status order',
+    })
+  @ApiParam({name:'id',type:'number',description:'id de la commande'})
   async update(@Param('id',ParseIntPipe) id: string, @Body() updateOrderStatusDto: UpdateOrderStatusDto, @CurrentUser() currentUser:User) {
     return await this.ordersService.update(+id, updateOrderStatusDto, currentUser);
   }
@@ -43,6 +58,10 @@ export class OrdersController {
   @AuthorizeRoles(UserRole.Admin)
   @UseGuards(AuthentificationGuard,AuthorizeGuard)
   @Put('cancel/:id')
+  @ApiOperation({
+    description: 'this is the endpoint for cancelling an order',
+    })
+  @ApiParam({name:'id',type:'number',description:'id de la commande'})
   async cancelled(@Param('id',ParseIntPipe) id: string, @CurrentUser() currentUser:User){
     return await this.ordersService.cancelled(+id, currentUser);
   }
