@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Put, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, UseGuards, ParseIntPipe, Patch } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -10,6 +10,7 @@ import { AuthorizeGuard } from 'src/utility/guards/authorization.guard';
 import { UserRole } from 'src/utility/common/user-roles.enum';
 import { AuthorizeRoles } from 'src/utility/decorators/authorize-roles.decorator';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
+import { UpdateCartDto } from './dto/update-cart.dto';
 
 @Controller('orders')
 @ApiTags('Commandes')
@@ -53,6 +54,11 @@ export class OrdersController {
   @ApiParam({name:'id',type:'number',description:'id de la commande'})
   async update(@Param('id',ParseIntPipe) id: string, @Body() updateOrderStatusDto: UpdateOrderStatusDto, @CurrentUser() currentUser:User) {
     return await this.ordersService.update(+id, updateOrderStatusDto, currentUser);
+  }
+
+  @Patch('cart/:id')
+  async updateCartItem(@Param('id') id: string, @Body() updateCartDto: UpdateCartDto,@CurrentUser() currentUser:User) {
+    return await this.ordersService.updateCartItem(+id, updateCartDto,currentUser);
   }
 
   @AuthorizeRoles(UserRole.Admin)

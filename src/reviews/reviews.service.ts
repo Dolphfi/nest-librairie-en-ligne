@@ -20,7 +20,7 @@ export class ReviewsService {
     let review=await this.findOneByUserAndLivres(currentUser.id,createReviewDto.livreId);
     if(!review){
       review=this.reviewRepository.create(createReviewDto);
-      review.User=currentUser;
+      review.user=currentUser;
       review.livre=livre;
     }else{
       review.comment=createReviewDto.comment,
@@ -38,7 +38,7 @@ export class ReviewsService {
     return await this.reviewRepository.find({
       where:{livre:{id}},
       relations:{
-        User:true,
+        user:true,
         livre:{
           category:true,
         },
@@ -49,7 +49,7 @@ export class ReviewsService {
     const review=await this.reviewRepository.findOne({
       where:{id},
       relations:{
-        User:true,
+        user:true,
         livre:{
           category:true,
         },
@@ -71,7 +71,7 @@ export class ReviewsService {
   async findOneByUserAndLivres(userId:number,livreId:number){
     return await this.reviewRepository.findOne({
       where:{
-        User:{
+        user:{
           id:userId,
         },
         livre:{
@@ -79,7 +79,7 @@ export class ReviewsService {
         }
       },
       relations:{
-        User:true,
+        user:true,
         livre:{
           category:true
         }

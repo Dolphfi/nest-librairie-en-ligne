@@ -31,8 +31,8 @@ export class User {
     category:Category[];
     @OneToMany(()=>Livre,(livres)=>livres.addedBy)
     livre:Livre[];
-    @OneToMany(()=>Review,(rev)=>rev.User)
-    Review:Review[];
+    @OneToMany(()=>Review,(rev)=>rev.user)
+    reviews:Review[];
     @OneToMany(()=>Order,(order)=>order.updatedBy)
     ordersUpdateBy:Order[]
     @OneToMany(()=>Order,(order)=>order.user)

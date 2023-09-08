@@ -25,6 +25,7 @@ export class Order {
     livres:OrdersLivres[]; 
     @ManyToOne(()=> User,(user)=>user.orders)
     user:User;
+    total_Panier:number;
   
 
 

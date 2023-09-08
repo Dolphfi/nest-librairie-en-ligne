@@ -17,8 +17,8 @@ export class Review {
     createAt:Timestamp;
     @UpdateDateColumn() 
     updateAt: Timestamp;
-    @ManyToOne(type=>User,(User)=>User.Review)
-    User:User;
-    @ManyToOne(type=>Livre,(livre)=>livre.Review)
+    @ManyToOne(type=>User,(user)=>user.reviews)
+    user:User;
+    @ManyToOne(type=>Livre,(livre)=>livre.reviews)
     livre:Livre;
 }

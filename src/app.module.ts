@@ -7,19 +7,12 @@ import { CategoryModule } from './category/category.module';
 import { LivresModule } from './livres/livres.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { OrdersModule } from './orders/orders.module';
+import { AppDataSource } from 'database/database-source';
 
 @Module({
   imports: [
   ConfigModule.forRoot({ isGlobal: true}),
-  TypeOrmModule.forRoot({
-    type: 'mysql',
-    host: 'localhost',
-    database: 'bibliotheque',
-    username: 'root',
-    password: 'Rodolph4904@',
-    synchronize: true,
-    autoLoadEntities: true,
-  }),
+  TypeOrmModule.forRoot(AppDataSource),
   UsersModule,
   CategoryModule,
   LivresModule,

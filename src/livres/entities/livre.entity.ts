@@ -26,7 +26,7 @@ export class Livre {
     @ManyToOne(()=>Category,(cat)=>cat.livre)
     category: Category;
     @OneToMany(()=>Review,(rev)=>rev.livre)
-    Review:Review;
+    reviews:Review[];
     @OneToMany(()=>OrdersLivres, (ol)=>ol.livre)
     livres:OrdersLivres[];
 

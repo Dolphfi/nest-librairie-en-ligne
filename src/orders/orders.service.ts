@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { User } from 'src/users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,6 +10,7 @@ import { Livre } from 'src/livres/entities/livre.entity';
 import { LivresService } from 'src/livres/livres.service';
 import { UpdateOrderStatusDto } from './dto/update-order-status.dto';
 import { OrderStatus } from './enums/order-status.enum';
+import { UpdateCartDto } from './dto/update-cart.dto';
 
 @Injectable()
 export class OrdersService {
@@ -17,7 +18,7 @@ export class OrdersService {
   private readonly orderRepository: Repository<Order>,
   @InjectRepository(OrdersLivres)
   private readonly olRepository: Repository<OrdersLivres>,
-  private readonly livreServices: LivresService
+  @Inject(forwardRef(()=>LivresService)) private readonly livreServices: LivresService
   ){}
 
   async create(createOrderDto: CreateOrderDto, currentUser: User):Promise<Order>  {
@@ -37,7 +38,7 @@ export class OrdersService {
       const order = orderTable;
       const livre = await this.livreServices.findOne(createOrderDto.orderedLivres[i].id);
       const livre_quantity = createOrderDto.orderedLivres[i].livre_quantity;
-      const livre_price_unit = createOrderDto.orderedLivres[i].livre_price_unit;
+      const livre_price_unit = livre.prix;
       olEntity.push({
         order,
         livre,
@@ -51,21 +52,29 @@ export class OrdersService {
     .into(OrdersLivres)
     .values(olEntity)
     .execute();
-    return await this.findOne(orderTable.id) ; 
+    const orderFinal = await this.findOne(orderTable.id);
+    let totPanier = await this.dynamicTotalPrice(orderTable.id);
+    orderFinal.total_Panier = totPanier;
+    return orderFinal ; 
   }
 
   async findAll():Promise<Order[]>  {
-    return await this.orderRepository.find({
+    const order = await this.orderRepository.find({
       relations:{
         shippingAddress: true,
         user: true,
         livres:{livre:true},
       },
     });
+    for(const orders of order){
+      const tot = await this.dynamicTotalPrice(orders.id);
+      orders.total_Panier = tot;
+    }
+    return order;
   }
 
   async findOne(id: number):Promise<Order>  {
-    return await this.orderRepository.findOne({
+    const order = await this.orderRepository.findOne({
       where: { id },
       relations:{
         shippingAddress: true,
@@ -73,6 +82,15 @@ export class OrdersService {
         livres:{livre:true},
       },
     });
+    order.total_Panier = await this.dynamicTotalPrice(id);
+    return order;
+  }
+
+  async findOneByLivreId(id:number){
+    return await this.olRepository.findOne({
+      relations:{livre:true},
+      where:{livre:{id:id}},
+    })
   }
 
   async update(id: number, updateOrderStatusDto: UpdateOrderStatusDto, currentUser:User) {
@@ -118,4 +136,41 @@ export class OrdersService {
       await this.livreServices.updateStock(ol.livre.id,ol.livre_quantity,status);
     }
   }
+
+  async dynamicTotalPrice(id:number){
+  let total=0;
+  const livre= await this.olRepository.find({
+    relations:{order:true},
+    where:{order:{id:id}}
+  })
+  for(let i=0;i<livre.length;i++){
+    total+=livre[i].livre_quantity*livre[i].livre_price_unit;
+  }
+
+  return total;
+}
+
+
+  async updateCartItem(orderId: number, updateCartDto: UpdateCartDto, currentUser: User): Promise<Order> {
+    const order = await this.findOne(orderId);
+    if (!order) {
+      throw new NotFoundException(`Order with ID ${orderId} not found`);
+    }
+    const orderStatusString = order.status.toString();
+    const allowedStatusesForProductUpdate: string[] = [OrderStatus.PENDING.toString(), OrderStatus.SHIPPED.toString()];
+  
+    if (!allowedStatusesForProductUpdate.includes(orderStatusString)) {
+      throw new BadRequestException(`Cannot update book for an order with status ${order.status}`);
+    }
+    const cartItem = order.livres.find((item) => item.livre.id === updateCartDto.id);
+    if (!cartItem) {
+      throw new NotFoundException(`Product with ID ${updateCartDto.id} not found in the order`);
+    }
+    cartItem.livre_quantity = updateCartDto.livre_quantity;
+    const updatedOrder = await this.orderRepository.save(order);
+    updatedOrder.total_Panier = await this.dynamicTotalPrice(orderId);
+  
+    return updatedOrder;
+  }
+
 }
