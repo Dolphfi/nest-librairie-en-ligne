@@ -13,7 +13,8 @@ import { AuthorizeGuard } from 'src/utility/guards/authorization.guard';
 
 @Controller('users')
 @ApiTags('Users')
-export class UsersController { constructor(private readonly usersService: UsersService) {}
+export class UsersController { 
+  constructor(private readonly usersService: UsersService) {}
 
   @Post('signup')
   @ApiOperation({ description: 'this is the endpoint for Creating  a user' })
@@ -24,8 +25,7 @@ export class UsersController { constructor(private readonly usersService: UsersS
   @Post('signin')
   @ApiOperation({ description: 'this is the endpoint for connect  a user' })
   async signIn(@Body() signInUserDto: SignInUserDto): Promise<{
-    token_access: string;
-    user: User;}>{
+    token_access: string; user: User;}>{
     const user = await this.usersService.signin(signInUserDto);
     const token_access = await this.usersService.token_access(user);
 
