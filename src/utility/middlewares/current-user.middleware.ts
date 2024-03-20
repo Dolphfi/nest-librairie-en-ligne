@@ -7,7 +7,7 @@ import { UsersService } from 'src/users/users.service';
 declare global{
     namespace Express{
         interface Request{
-            currentUser?:User;
+            currentUser?: User;
         }
     }
 }

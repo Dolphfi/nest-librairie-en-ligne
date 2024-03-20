@@ -75,7 +75,7 @@ export class UsersController {
   description: 'this is the endpoint for updating  active user profile',
 })
 @ApiParam({name:'id',type:'number',description:'Active user'})
-async update( @Body() updateUserDto: UpdateUserDto, @CurrentUser() currentUser:User,):Promise<User> {
+async update(@Body() updateUserDto: UpdateUserDto, @CurrentUser() currentUser:User,):Promise<User> {
     const user = currentUser;
     return await this.usersService.update(updateUserDto, currentUser);
   }
